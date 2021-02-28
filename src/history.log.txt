@@ -1,0 +1,4 @@
+fileUtility: 20210228 -MP-
+------------------------------------------
+- Commit lineModule.f90, wordModule.f90, versionModule.f90, history.log.
+- Added fu$ "namespace" 

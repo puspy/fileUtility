@@ -51,5 +51,8 @@
 		<Filter Name="Resource Files" Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"/>
 		<Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl">
 		<File RelativePath=".\src\data_type_manager.f90"/>
-		<File RelativePath=".\src\fileModule.f90"/></Filter></Files>
+		<File RelativePath=".\src\fileModule.f90"/>
+		<File RelativePath=".\src\lineModule.f90"/>
+		<File RelativePath=".\src\versionModule.f90"/>
+		<File RelativePath=".\src\wordModule.f90"/></Filter></Files>
 	<Globals/></VisualStudioProject>

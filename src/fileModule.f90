@@ -1,17 +1,19 @@
 ! Module created by Marc Puigpinos Blazquez on 28/02/2021
 ! readLine procedure is obtained from the book Modern Fortran in Practice. Author: Arjen Markus.
 
-module mFile
+module fu$mFile
     
     use iso_fortran_env
     
     use data_type_manager
     
+    use fu$mLine
+    
     implicit none
     
     private
     
-    public :: fileHandler_
+    public :: fu$fileHandler_
     
 #ifdef UNIX
     character(len=1), parameter :: sep = "/"
@@ -20,7 +22,7 @@ module mFile
 #else
     character(len=1), parameter :: sep = "/"
 #endif
-    type fileHandler_
+    type fu$fileHandler_
         
         integer(kind=itype)           :: unit
         character(len=:), allocatable :: address
@@ -43,9 +45,9 @@ module mFile
     contains
     
     subroutine openFileByFileName_fileHandler_(this, fileName, success)
-        class(fileHandler_), intent(inout) :: this
-        character(len=*), intent(in)       :: fileName
-        logical(kind=lgtype), intent(out)  :: success
+        class(fu$fileHandler_), intent(inout) :: this
+        character(len=*), intent(in)          :: fileName
+        logical(kind=lgtype), intent(out)     :: success
         
         success = .false.
         
@@ -66,10 +68,10 @@ module mFile
     end subroutine
     
     subroutine openFileByAddressAndFileName_fileHandler_(this, address, fileName, success)
-        class(fileHandler_), intent(inout) :: this
-        character(len=*), intent(in)       :: address
-        character(len=*), intent(in)       :: fileName
-        logical(kind=lgtype), intent(out)  :: success 
+        class(fu$fileHandler_), intent(inout) :: this
+        character(len=*), intent(in)          :: address
+        character(len=*), intent(in)          :: fileName
+        logical(kind=lgtype), intent(out)     :: success 
         
         success = .false.
         
@@ -87,8 +89,8 @@ module mFile
     end subroutine
     
     subroutine closeFile_fileHandler_(this, success)
-        class(fileHandler_), intent(inout) :: this
-        logical(kind=lgtype), intent(out)  :: success
+        class(fu$fileHandler_), intent(inout) :: this
+        logical(kind=lgtype), intent(out)     :: success
         
         success = .false.
         close(this%unit, iostat=this%err_stat, iomsg=this%err_msg)
@@ -99,7 +101,7 @@ module mFile
     end subroutine
     
     function getErrorMessage_fileHandler_(this)
-        class(fileHandler_), intent(in)                   :: this
+        class(fu$fileHandler_), intent(in)                :: this
         character(len=len( trim(adjustl(this%err_msg)) )) :: getErrorMessage_fileHandler_
         if ( this%err_stat == 0 ) then
             getErrorMessage_fileHandler_ = ""
@@ -110,14 +112,28 @@ module mFile
     end function
     
     subroutine readLine_fileHandler_(this, line, success)
-        class(fileHandler_), intent(inout)         :: this
-        character(len=:), allocatable, intent(out) :: line
-        logical(kind=lgtype), intent(out)          :: success
+        class(fu$fileHandler_), intent(inout) :: this
+        type(fu$line_), intent(out)           :: line
+        logical(kind=lgtype), intent(out)     :: success
         
-        character(len=0)                           :: newline
+        character(len=:), allocatable         :: auxline
+        character(len=0)                      :: newline
         
         success = .false.
         call readline_piece_by_piece(newline)
+        if ( .not. success ) return
+        call delete(line, success)
+        if ( .not. success ) then
+            this%err_stat = line%err_stat
+            this%err_msg = line%err_msg
+            return
+        endif
+        call new(line, auxline, success)
+        if ( .not. success ) then
+            this%err_stat = line%err_stat
+            this%err_msg = line%err_msg
+            return
+        endif
         
         contains
         
@@ -129,8 +145,8 @@ module mFile
             
             read(this%unit, '(a)', advance = 'no', size = sz, iostat = this%err_stat, iomsg = this%err_msg) piece
             if ( this%err_stat /= 0 .and. this%err_stat /= iostat_eor ) then
-                allocate( character(len=len(newline)) :: line )
-                line = newline
+                allocate( character(len=len(newline)) :: auxline )
+                auxline = newline
                 return
             endif
             
@@ -138,8 +154,8 @@ module mFile
             if ( sz >= len(piece) ) then
                 call readline_piece_by_piece(newline//piece)
             else
-                allocate( character(len=len(newline)+sz) :: line )
-                line = newline // piece(1:sz)
+                allocate( character(len=len(newline)+sz) :: auxline )
+                auxline = newline // piece(1:sz)
                 success = .true.
             endif
             
