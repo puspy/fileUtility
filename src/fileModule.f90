@@ -1,19 +1,19 @@
 ! Module created by Marc Puigpinos Blazquez on 28/02/2021
 ! readLine procedure is obtained from the book Modern Fortran in Practice. Author: Arjen Markus.
 
-module fu$mFile
+module mFile
     
     use iso_fortran_env
     
     use data_type_manager
     
-    use fu$mLine
+    use mLine, only: line_, new => newLineByString_mLine, delete => deleteLine_mLine
     
     implicit none
     
     private
     
-    public :: fu$fileHandler_
+    public :: fileHandler_
     
 #ifdef UNIX
     character(len=1), parameter :: sep = "/"
@@ -22,7 +22,7 @@ module fu$mFile
 #else
     character(len=1), parameter :: sep = "/"
 #endif
-    type fu$fileHandler_
+    type fileHandler_
         
         integer(kind=itype)           :: unit
         character(len=:), allocatable :: address
@@ -45,7 +45,7 @@ module fu$mFile
     contains
     
     subroutine openFileByFileName_fileHandler_(this, fileName, success)
-        class(fu$fileHandler_), intent(inout) :: this
+        class(fileHandler_), intent(inout)    :: this
         character(len=*), intent(in)          :: fileName
         logical(kind=lgtype), intent(out)     :: success
         
@@ -68,7 +68,7 @@ module fu$mFile
     end subroutine
     
     subroutine openFileByAddressAndFileName_fileHandler_(this, address, fileName, success)
-        class(fu$fileHandler_), intent(inout) :: this
+        class(fileHandler_), intent(inout)    :: this
         character(len=*), intent(in)          :: address
         character(len=*), intent(in)          :: fileName
         logical(kind=lgtype), intent(out)     :: success 
@@ -89,7 +89,7 @@ module fu$mFile
     end subroutine
     
     subroutine closeFile_fileHandler_(this, success)
-        class(fu$fileHandler_), intent(inout) :: this
+        class(fileHandler_), intent(inout)    :: this
         logical(kind=lgtype), intent(out)     :: success
         
         success = .false.
@@ -101,7 +101,7 @@ module fu$mFile
     end subroutine
     
     function getErrorMessage_fileHandler_(this)
-        class(fu$fileHandler_), intent(in)                :: this
+        class(fileHandler_), intent(in)                   :: this
         character(len=len( trim(adjustl(this%err_msg)) )) :: getErrorMessage_fileHandler_
         if ( this%err_stat == 0 ) then
             getErrorMessage_fileHandler_ = ""
@@ -112,8 +112,8 @@ module fu$mFile
     end function
     
     subroutine readLine_fileHandler_(this, line, success)
-        class(fu$fileHandler_), intent(inout) :: this
-        type(fu$line_), intent(out)           :: line
+        class(fileHandler_), intent(inout)    :: this
+        type(line_), intent(out)              :: line
         logical(kind=lgtype), intent(out)     :: success
         
         character(len=:), allocatable         :: auxline

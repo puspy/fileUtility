@@ -1,4 +1,4 @@
-module fu$mLine
+module mLine
     
     use data_type_manager
     
@@ -6,12 +6,13 @@ module fu$mLine
     
     private
     
-    public :: fu$line_
+    public :: line_
+    public :: newLineByDefault_mLine, newLineByString_mLine, deleteLine_mLine
     
     ! Parameters
     character(len=1), parameter :: defaultSep = " "
     
-    type fu$line_
+    type line_
         
         character(len=:), allocatable :: string   !String
         integer(kind=itype)           :: length,& !Length of the string
@@ -33,17 +34,6 @@ module fu$mLine
     
     end type
     
-    ! Constructor interface
-    interface fu$new
-        module procedure :: newLineByDefault_mLine
-        module procedure :: newLineByString_mLine    
-    end interface
-    
-    ! Destructor
-    interface fu$delete
-        module procedure :: deleteLine_mLine
-    end interface
-    
     contains
     
     !Module procedure.
@@ -51,7 +41,7 @@ module fu$mLine
     
     ! Constructor
     subroutine newLineByDefault_mLine(line) 
-        type(fu$line_), intent(out) :: line
+        type(line_), intent(out) :: line
         line%length = 0
         line%posi = 0
         line%err_stat = 0
@@ -60,7 +50,7 @@ module fu$mLine
     end subroutine
     
     subroutine newLineByString_mLine(line, string, success)
-        type(fu$line_), intent(out)       :: line
+        type(line_), intent(out)          :: line
         character(len=*), intent(in)      :: string
         logical(kind=lgtype), intent(out) :: success
         success = .false.
@@ -81,7 +71,7 @@ module fu$mLine
     
     !Destructor
     subroutine deleteLine_mLine(line, success)
-        type(fu$line_), intent(inout)     :: line
+        type(line_), intent(inout)        :: line
         logical(kind=lgtype), intent(out) :: success
         
         success = .false.
@@ -101,18 +91,18 @@ module fu$mLine
     !Public type bound procedures.
     
     subroutine getNextWordDefaultSeparator_line_(this)
-        class(fu$line_), intent(in) :: this
+        class(line_), intent(in) :: this
         return
     end subroutine
     
     subroutine getNextWordBySeparator_line_(this, sep)
-        class(fu$line_), intent(in)  :: this
+        class(line_), intent(in)     :: this
         character(len=*), intent(in) :: sep
         return
     end subroutine
     
     function getErrorMessage_line_(this)
-        class(fu$line_), intent(in) :: this
+        class(line_), intent(in)                          :: this
         character(len=len( trim(adjustl(this%err_msg)) )) :: getErrorMessage_line_
         if ( this%err_stat == 0 ) then
             getErrorMessage_line_ = " "
@@ -125,7 +115,7 @@ module fu$mLine
     !Private type bound procedures.
     
     subroutine saveCharsUntilSep_line_(this)
-        class(fu$line_), intent(in) :: this
+        class(line_), intent(in) :: this
         return
     end subroutine
     

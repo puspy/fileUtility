@@ -1,4 +1,10 @@
-fileUtility: 20210228 -MP-
+fileUtility: 0.0.0 20210228 -MP-
 ------------------------------------------
 - Commit lineModule.f90, wordModule.f90, versionModule.f90, history.log.
 - Added fu$ "namespace" 
+
+fileUtility: 1.0.0 20210229 -MP-
+------------------------------------------
+- Filled module mVersion. New version added 1.0.0.
+- Added module fileUtilityModule.f90. This will hold the fu$namespace by interfacing procedures and extending types. 
+- Remove fu$ "nampespace" added in previous versions.

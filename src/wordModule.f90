@@ -1,24 +1,20 @@
-module fu$mWord
+module mWord
     
     use data_type_manager
     
     implicit none
     
-    type fu$word_
+    private
+    
+    public :: word_
+    public :: newWordByDefault_mWord, newWordByString_mWord, delete_mWord
+    
+    type word_
         character(len=:), allocatable :: string
         integer(kind=itype)           :: length
         integer(kind=itype)           :: err_stat
         character(len=chtext)         :: err_msg
     end type
-    
-    interface fu$new
-        module procedure :: newWordByDefault_mWord
-        module procedure :: newWordByString_mWord
-    end interface
-    
-    interface fu$delete
-        module procedure :: delete_mWord
-    end interface
     
     contains
     
@@ -27,7 +23,7 @@ module fu$mWord
     
     !Constructors
     subroutine newWordByDefault_mWord(word)
-        type(fu$word_), intent(out) :: word
+        type(word_), intent(out) :: word
         word%length = 0
         word%err_stat = 0
         word%err_msg = ""
@@ -35,7 +31,7 @@ module fu$mWord
     end subroutine
     
     subroutine newWordByString_mWord(word, string, success)
-        type(fu$word_), intent(out)       :: word
+        type(word_), intent(out)          :: word
         character(len=*), intent(in)      :: string
         logical(kind=lgtype), intent(out) :: success
         
@@ -59,7 +55,7 @@ module fu$mWord
     !Destructors
     
     subroutine delete_mWord(word, success)
-        type(fu$word_), intent(inout)     :: word
+        type(word_), intent(inout)        :: word
         logical(kind=lgtype), intent(out) :: success
         
         success = .false.

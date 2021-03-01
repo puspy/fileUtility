@@ -52,6 +52,7 @@
 		<Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl">
 		<File RelativePath=".\src\data_type_manager.f90"/>
 		<File RelativePath=".\src\fileModule.f90"/>
+		<File RelativePath=".\src\fileUtilityModule.f90"/>
 		<File RelativePath=".\src\lineModule.f90"/>
 		<File RelativePath=".\src\versionModule.f90"/>
 		<File RelativePath=".\src\wordModule.f90"/></Filter></Files>
