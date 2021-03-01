@@ -8,3 +8,7 @@ fileUtility: 1.0.0 20210229 -MP-
 - Filled module mVersion. New version added 1.0.0.
 - Added module fileUtilityModule.f90. This will hold the fu$namespace by interfacing procedures and extending types. 
 - Remove fu$ "nampespace" added in previous versions.
+
+fileUtility: 1.0.1 20210229 -MP-
+------------------------------------------
+- Added some new procedures to wordModule.f90.

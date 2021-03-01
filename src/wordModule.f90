@@ -10,10 +10,27 @@ module mWord
     public :: newWordByDefault_mWord, newWordByString_mWord, delete_mWord
     
     type word_
+        
         character(len=:), allocatable :: string
         integer(kind=itype)           :: length
         integer(kind=itype)           :: err_stat
         character(len=chtext)         :: err_msg
+        
+    contains
+    
+        procedure :: getLength       => getLength_word_
+        procedure :: isEqualToString_word_
+        procedure :: isEqualToWord_word_
+        generic   :: isEqual         => isEqualToString_word_,&
+                                        isEqualToWord_word_
+        procedure :: upcase          => upcase_word_
+        procedure :: downcase        => downcase_word_
+        procedure :: getErrorMessage => getErrorMessage_word_
+        procedure :: writeOnScreen_word_
+        procedure :: writeOnUnit_word_
+        generic   :: write           => writeOnScreen_word_,&
+                                        writeOnUnit_word_
+        
     end type
     
     contains
@@ -74,6 +91,70 @@ module mWord
     
     !Type bound procedures
     !Public type bound procedures
+    
+    function getLength_word_(this)
+        integer(kind=itype)      :: getLength_word_
+        class(word_), intent(in) :: this
+        getLength_word_ = this%length
+        return
+    end function
+    
+    function isEqualToString_word_(this, string)
+        logical(kind=lgtype)         :: isEqualToString_word_ 
+        class(word_), intent(in)     :: this
+        character(len=*), intent(in) :: string
+        isEqualToString_word_ = this%string == trim(adjustl(string))
+        return
+    end function
+    
+    function isEqualToWord_word_(this, word)
+        logical(kind=lgtype)     :: isEqualToWord_word_
+        class(word_), intent(in) :: this
+        type(word_), intent(in)  :: word
+        isEqualToWord_word_ = .false.
+        if ( this%length /= word%length ) return
+        if ( this%string /= word%string ) return
+        isEqualToWord_word_ = .true.
+        return
+    end function
+    
+    subroutine upcase_word_(this)
+        class(word_), intent(inout) :: this
+        if ( this%length == 0 ) return
+        call upcase(this%string)
+        return
+    end subroutine
+    
+    subroutine downcase_word_(this)
+        class(word_), intent(inout) :: this
+        if ( this%length == 0 ) return
+        call downcase(this%string)
+        return
+    end subroutine
+    
+    function getErrorMessage_word_(this)
+        class(word_), intent(in)                          :: this
+        character(len=len( trim(adjustl(this%err_msg)) )) :: getErrorMessage_word_
+        if ( this%err_stat == 0 ) then
+            getErrorMessage_word_ = " "
+        else
+            getErrorMessage_word_ = trim(adjustl(this%err_msg))
+        endif
+        return
+    end function  
+    
+    subroutine writeOnScreen_word_(this)
+        class(word_), intent(in) :: this
+        write(*,'(a)') this%string
+        return
+    end subroutine
+    
+    subroutine writeOnUnit_word_(this, funit)
+        class(word_), intent(in)        :: this
+        integer(kind=itype), intent(in) :: funit
+        write(funit,'(a)') this%string
+        return
+    end subroutine
     
     !Private type bound procedures
     
