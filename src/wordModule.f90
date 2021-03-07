@@ -11,6 +11,7 @@ module mWord
     
     type word_
         
+        private
         character(len=:), allocatable :: string
         integer(kind=itype)           :: length
         integer(kind=itype)           :: err_stat
@@ -25,11 +26,12 @@ module mWord
                                         isEqualToWord_word_
         procedure :: upcase          => upcase_word_
         procedure :: downcase        => downcase_word_
-        procedure :: getErrorMessage => getErrorMessage_word_
+        procedure :: count           => count_word_
         procedure :: writeOnScreen_word_
         procedure :: writeOnUnit_word_
         generic   :: write           => writeOnScreen_word_,&
-                                        writeOnUnit_word_
+                                        writeOnUnit_word_        
+        procedure :: getErrorMessage => getErrorMessage_word_
         
     end type
     
@@ -132,6 +134,34 @@ module mWord
         return
     end subroutine
     
+    function count_word_(this)
+        integer(kind=itype)      :: count_word_
+        class(word_), intent(in) :: this
+        count_word_ = len(trim(adjustl(this%string)))
+        return
+    end function
+    
+    subroutine writeOnScreen_word_(this, success)
+        class(word_), intent(inout)       :: this
+        logical(kind=lgtype), intent(out) :: success
+        success = .false.
+        write(*,'(a)', iostat=this%err_stat, iomsg=this%err_msg) this%string
+        if ( this%err_stat /=  0 ) return
+        success = .true.
+        return
+    end subroutine
+    
+    subroutine writeOnUnit_word_(this, funit, success)
+        class(word_), intent(inout)       :: this
+        integer(kind=itype), intent(in)   :: funit
+        logical(kind=lgtype), intent(out) :: success
+        success = .false.
+        write(funit,'(a)', iostat=this%err_stat, iomsg=this%err_msg) this%string
+        if ( this%err_stat /= 0 ) return
+        success = .true.
+        return
+    end subroutine    
+    
     function getErrorMessage_word_(this)
         class(word_), intent(in)                          :: this
         character(len=len( trim(adjustl(this%err_msg)) )) :: getErrorMessage_word_
@@ -142,19 +172,6 @@ module mWord
         endif
         return
     end function  
-    
-    subroutine writeOnScreen_word_(this)
-        class(word_), intent(in) :: this
-        write(*,'(a)') this%string
-        return
-    end subroutine
-    
-    subroutine writeOnUnit_word_(this, funit)
-        class(word_), intent(in)        :: this
-        integer(kind=itype), intent(in) :: funit
-        write(funit,'(a)') this%string
-        return
-    end subroutine
     
     !Private type bound procedures
     

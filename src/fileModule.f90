@@ -24,6 +24,7 @@ module mFile
 #endif
     type fileHandler_
         
+        private
         integer(kind=itype)           :: unit
         character(len=:), allocatable :: address
         character(len=:), allocatable :: fileName
@@ -39,6 +40,10 @@ module mFile
         procedure :: close           => closeFile_fileHandler_
         procedure :: getErrorMessage => getErrorMessage_fileHandler_
         procedure :: readLine        => readLine_fileHandler_
+        procedure :: writeLineOnUnit_fileHandler_
+        procedure :: writeEmptyLineOnUnit_fileHandler_
+        generic   :: writeLine => writeLineOnUnit_fileHandler_,&
+                                  writeEmptyLineOnUnit_fileHandler_
         
     end type
     
@@ -124,14 +129,14 @@ module mFile
         if ( .not. success ) return
         call delete(line, success)
         if ( .not. success ) then
-            this%err_stat = line%err_stat
-            this%err_msg = line%err_msg
+            this%err_stat = line%getErrorStatus()
+            this%err_msg = line%getErrorMessage()
             return
         endif
         call new(line, auxline, success)
         if ( .not. success ) then
-            this%err_stat = line%err_stat
-            this%err_msg = line%err_msg
+            this%err_stat = line%getErrorStatus()
+            this%err_msg = line%getErrorMessage()
             return
         endif
         
@@ -162,5 +167,26 @@ module mFile
         end subroutine
         
     end subroutine
+        
+    subroutine writeLineOnUnit_fileHandler_(this, line, success)
+        class(fileHandler_), intent(inout) :: this
+        type(line_), intent(inout)         :: line
+        logical(kind=lgtype), intent(out)  :: success
+        call line%write(this%unit, success)
+        if ( success ) return
+        this%err_stat = line%getErrorStatus()
+        this%err_msg  = line%getErrorMessage()
+        return
+    end subroutine    
+    
+    subroutine writeEmptyLineOnUnit_fileHandler_(this, success)
+        class(fileHandler_), intent(inout) :: this
+        logical(kind=lgtype), intent(out)  :: success
+        success = .false.
+        write(this%unit,'(a)', iostat=this%err_stat, iomsg=this%err_msg) ""
+        if ( this%err_stat /= 0 ) return
+        success = .true.
+        return
+    end subroutine     
     
 end module

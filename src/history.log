@@ -12,3 +12,8 @@ fileUtility: 1.0.0 20210229 -MP-
 fileUtility: 1.0.1 20210229 -MP-
 ------------------------------------------
 - Added some new procedures to wordModule.f90.
+
+fileUtility: 1.0.2 20210308 -MP-
+------------------------------------------
+- Added some new features to wordModule.f90, lineModule.f90 and fileModule.f90
+- Make all in-type variables private, so only accessible by procedures.

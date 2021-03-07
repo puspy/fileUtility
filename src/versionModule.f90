@@ -9,7 +9,7 @@ module mVersion
     type version_
         character(len=2) :: major = "1"
         character(len=2) :: minor = "0"
-        character(len=3) :: build = "1"
+        character(len=3) :: build = "2"
     contains
         procedure :: setVersion => setVersion_version_
         procedure :: getVersion => getVersion_version_
